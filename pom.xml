@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.zw</groupId>
+    <artifactId>bigdata-note</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>hadoop/hive-demo</module>
+        <module>hadoop/mapreduce-demo</module>
+        <module>spark/scala-demo</module>
+        <module>spark/spark-demo</module>
+        <module>hadoop/hdfs-demo</module>
+        <module>hadoop/hbase-demo</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <scala.version>2.11.8</scala.version>
+        <junit.version>4.12</junit.version>
+        <slf4j.version>1.7.21</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <hadoop.version>2.7.6</hadoop.version>
+        <hive.version>1.2.1</hive.version>
+        <hbase.version>1.2.4</hbase.version>
+        <jedis.version>2.8.2</jedis.version>
+        <fastjson.version>1.2.20</fastjson.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>cloudera</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+        </repository>
+        <repository>
+            <id>aliyun</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>cloudera2</id>
+            <url>https://repository.cloudera.com/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
+    <profiles>
+        <profile>
+            <!-- 本地开发环境 -->
+            <id>dev</id>
+            <properties>
+                <!--<avro.version>1.7.7</avro.version>-->
+                <avro.version>1.7.6-cdh5.7.0</avro.version>
+                <kafka.version>0.10.0-kafka-2.1.1</kafka.version>
+                <!--<spark.version>2.1.0.cloudera1</spark.version>-->
+                <cdh.version>2.6.0-cdh5.10.1</cdh.version>
+                <!--<kafka.version>0.10.1.0</kafka.version>-->
+                <spark.version>2.3.0</spark.version>
+                <solr.version>4.10.3</solr.version>
+                <scope.value>compile</scope.value>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <!-- 测试环境 -->
+            <id>test</id>
+            <properties>
+                <avro.version>1.7.6-cdh5.7.0</avro.version>
+                <kafka.version>0.10.0-kafka-2.1.1</kafka.version>
+                <spark.version>2.1.0.cloudera1</spark.version>
+                <cdh.version>2.6.0-cdh5.10.1</cdh.version>
+                <solr.version>4.10.3-cdh5.10.1</solr.version>
+                <scope.value>provided</scope.value>
+            </properties>
+        </profile>
+        <profile>
+            <!-- 生产环境 -->
+            <id>prod</id>
+            <properties>
+                <avro.version>1.7.6-cdh5.7.0</avro.version>
+                <kafka.version>0.10.0-kafka-2.1.1</kafka.version>
+                <spark.version>2.2.0.cloudera1</spark.version>
+                <cdh.version>2.6.0-cdh5.10.1</cdh.version>
+                <solr.version>4.10.3-cdh5.10.1</solr.version>
+                <scope.value>provided</scope.value>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencies>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <!-- <version>2.15.1</version> -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <args>
+                        <arg>-target:jvm-${java.version}</arg>
+                    </args>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
