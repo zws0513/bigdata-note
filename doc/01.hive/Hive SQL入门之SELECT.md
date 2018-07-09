@@ -1,4 +1,5 @@
 #1. Select
+
 ##1.1 语法
 
 ```SQL
@@ -15,6 +16,7 @@ SELECT [ALL | DISTINCT] select_expr, select_expr, ...
 ```
 
 ##1.2 示例
+
 **示例一**
 
 ```SQL
@@ -96,6 +98,7 @@ store_sales join time_dim on (ss_sold_time_sk = t_time_sk)
 ```
 
 ###2.1.2 Reduce端Join
+
 又叫Common Join或Shuffle Join。适用于两边数据量很大。
 
 ###2.1.3 SMB（Sort-Merge-Buket） Join
