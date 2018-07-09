@@ -1,8 +1,7 @@
 # 1. Select
 
 
-1.1 语法
----
+## 1.1 语法
 
 ```SQL
 [WITH CommonTableExpression (, CommonTableExpression)*] 
@@ -17,8 +16,7 @@ SELECT [ALL | DISTINCT] select_expr, select_expr, ...
 [LIMIT number]
 ```
 
-1.2 示例
----
+## 1.2 示例
 
 **示例一**
 
@@ -87,14 +85,11 @@ group by partner, day
 order by partner, day
 ```
 
-2. Join
-===
+# 2. Join
 
-2.1 计算引擎的Join类型
----
+## 2.1 计算引擎的Join类型
 
-2.1.1 Map端Join
----
+### 2.1.1 Map端Join
 
 如果一张表的数据很大，另外一张表很少(<1000行)，那么我们可以将数据量少的那张表放到内存里面，在map端做join。
 
@@ -103,13 +98,11 @@ select /*+ MAPJOIN(time_dim) */ count(1) from
 store_sales join time_dim on (ss_sold_time_sk = t_time_sk)
 ```
 
-2.1.2 Reduce端Join
----
+### 2.1.2 Reduce端Join
 
 又叫Common Join或Shuffle Join。适用于两边数据量很大。
 
-2.1.3 SMB（Sort-Merge-Buket） Join
----
+### 2.1.3 SMB（Sort-Merge-Buket） Join
 
 目的主要是为了解决大表与大表间的 Join 问题，首先进行分桶（分桶其实就是把大表化成了“小表”），然后把相同Key都放到同一个bucket，较少无关项得扫描。这是典型的分而治之的思想。
 
@@ -119,8 +112,7 @@ set hive.optimize.bucketmapjoin=true;
 set hive.optimize.bucketmapjoin.sortedmerge=true;
 ```
 
-2.2 SQL的Join类型
----
+## 2.2 SQL的Join类型
 
 **t1表**
 
@@ -138,8 +130,7 @@ id | age
 2 | 29
 4 | 21
 
-2.2.1 内关联（join）
----
+### 2.2.1 内关联（join）
 
 只返回能关联上的结果。
 
@@ -156,8 +147,7 @@ ON (a.id = b.id);
 2 lisi 29
 ```
 
-2.2.2 左外关联（left outer join）
----
+### 2.2.2 左外关联（left outer join）
 
 以LEFT [OUTER] JOIN关键字前面的表作为主表，和其他表进行关联，返回记录和主表的记录数一致，关联不上的字段置为NULL。
 
@@ -177,8 +167,7 @@ ON (a.id = b.id);
 
 <font color=red>注：如果左右表是1对n，则这一条记录会变成n条</font>
 
-2.2.3 右外关联（right outer join）
----
+### 2.2.3 右外关联（right outer join）
 
 和左外关联相反，以RIGTH [OUTER] JOIN关键词后面的表作为主表，和前面的表做关联，返回记录数和主表一致，关联不上的字段为NULL。
 
@@ -196,8 +185,7 @@ ON (a.id = b.id);
 NULL NULL 21
 ```
 
-2.2.4 全外关联（full outer join）
----
+### 2.2.4 全外关联（full outer join）
 
 以两个表的记录为基准，返回两个表的记录去重之和，关联不上的字段为NULL。
 
@@ -218,8 +206,7 @@ ON (a.id = b.id);
 NULL NULL 21
 ```
 
-2.2.5 半关联（left semi join）
----
+### 2.2.5 半关联（left semi join）
 
 以LEFT SEMI JOIN关键字前面的表为主表，返回主表的KEY也在副表中的记录。
 
@@ -247,8 +234,7 @@ FROM t1 a
 WHERE EXISTS (SELECT 1 FROM t2 b WHERE a.id = b.id);
 ```
 
-2.2.6 笛卡尔积关联（cross join）
----
+### 2.2.6 笛卡尔积关联（cross join）
 
 返回两个表的笛卡尔积结果，不需要指定关联键。
 
@@ -271,8 +257,7 @@ CROSS JOIN t2 b;
 3 wangwu 21
 ```
 
-3. 窗口函数
-===
+# 3. 窗口函数
 
 **t1**
 
@@ -293,8 +278,7 @@ cookie2 | 2015-04-10 11:00:00 | url77
 cookie2 | 2015-04-10 10:10:00 | url44
 cookie2 | 2015-04-10 10:50:01 | url55
 
-3.1 first_value、last_value
----
+## 3.1 first_value、last_value
 
 first_value: 取分组内排序后，截止到当前行，第一个值
 last_value: 取分组内排序后，截止到当前行，最后一个值
@@ -326,8 +310,7 @@ cookie2 2015-04-10 10:50:05   url66    6 url11    url66
 cookie2 2015-04-10 11:00:00   url77    7 url11    url77
 ```
 
-3.2 over
----
+## 3.2 over
 
 **t1**
 cookieid | createtime | pv
@@ -366,8 +349,7 @@ cookie1 2015-04-16      4   26  26  26  13  13   4
 
 注：可以使用sum、avg、count、min、max
 
-3.3 rank、dense_rank、row_number
----
+## 3.3 rank、dense_rank、row_number
 
 rank：在分组内的排名，排名相等会在名次中留下空位
 dense_rank：在分组内的排名，排名相等会在名次中不会留下空位
@@ -395,22 +377,18 @@ cookie1 2015-04-14   2   6   5   6
 cookie1 2015-04-10   1   7   6   7
 ```
 
-4. 优化
-===
+# 4. 优化
 
-4.1 使用分区剪裁、列剪裁
----
+## 4.1 使用分区剪裁、列剪裁
 
 在SELECT中，只拿需要的列，如果有，尽量使用分区过滤，少用SELECT *。
 在分区剪裁中，当使用外关联时，如果将副表的过滤条件写在Where后面，那么就会先全表关联，之后再过滤。
 
-4.2 少用count distinct
----
+## 4.2 少用count distinct
 
 数据量小的时候无所谓，数据量大的情况下，由于COUNT DISTINCT操作需要用一个Reduce Task来完成，这一个Reduce需要处理的数据量太大，就会导致整个Job很难完成，一般COUNT DISTINCT使用先GROUP BY再COUNT的方式替换。
 
-4.3 减少map数（专家）
----
+## 4.3 减少map数（专家）
 
 ```
 set mapred.max.split.size=100000000;
@@ -419,16 +397,14 @@ set mapred.min.split.size.per.rack=100000000;
 set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat;
 ```
 
-4.4 调整reduce个数（专家）
----
+## 4.4 调整reduce个数（专家）
 
 ```
 set hive.exec.reducers.bytes.per.reducer=500000000; （500M）
 set mapred.reduce.tasks = 15;
 ```
 
-4.5 中间结果压缩（专家）
----
+## 4.5 中间结果压缩（专家）
 
 ```SQL
 -- 中间Lzo,最终Gzip
@@ -444,7 +420,6 @@ set hive.exec.compress.intermediate = true;
 set hive.intermediate.compression.codec = org.apache.hadoop.io.compress.LzoCodec;  
 ```
 
-5. 参考
-===
+# 5. 参考
 
 [内置函数](https://blog.csdn.net/u013980127/article/details/52606024)
