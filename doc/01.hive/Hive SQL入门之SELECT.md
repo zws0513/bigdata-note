@@ -1,5 +1,6 @@
 #1. Select
 ##1.1 语法
+
 ```SQL
 [WITH CommonTableExpression (, CommonTableExpression)*] 
 SELECT [ALL | DISTINCT] select_expr, select_expr, ...
@@ -82,8 +83,11 @@ order by partner, day
 ```
 
 #2. Join
+
 ##2.1 计算引擎的Join类型
+
 ###2.1.1 Map端Join
+
 如果一张表的数据很大，另外一张表很少(<1000行)，那么我们可以将数据量少的那张表放到内存里面，在map端做join。
 
 ```
