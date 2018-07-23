@@ -40,6 +40,7 @@ on t2.mac = t1.mac;
 ```
 
 好处：
+
 - 代码简洁
 - 优化查询，如果SQL中有同样的多个子查询（>1），则会只查询一遍，放入临时表中
 
@@ -278,10 +279,10 @@ cookie2 | 2015-04-10 11:00:00 | url77
 cookie2 | 2015-04-10 10:10:00 | url44
 cookie2 | 2015-04-10 10:50:01 | url55
 
-## 3.1 first_value、last_value
+## 3.1 first\_value、last\_value
 
-first_value: 取分组内排序后，截止到当前行，第一个值
-last_value: 取分组内排序后，截止到当前行，最后一个值
+- first\_value: 取分组内排序后，截止到当前行，第一个值
+- last\_value: 取分组内排序后，截止到当前行，最后一个值
 
 ```SQL
 SELECT cookieid,
@@ -313,6 +314,7 @@ cookie2 2015-04-10 11:00:00   url77    7 url11    url77
 ## 3.2 over
 
 **t1**
+
 cookieid | createtime | pv
 ---- | ---- | ----
 cookie1 | 2015-04-10 | 1
@@ -349,11 +351,11 @@ cookie1 2015-04-16      4   26  26  26  13  13   4
 
 注：可以使用sum、avg、count、min、max
 
-## 3.3 rank、dense_rank、row_number
+## 3.3 rank、dense\_rank、row\_number
 
-rank：在分组内的排名，排名相等会在名次中留下空位
-dense_rank：在分组内的排名，排名相等会在名次中不会留下空位
-row_number：从1开始，按照顺序生成分组内记录的排序
+- rank：在分组内的排名，排名相等会在名次中留下空位
+- dense\_rank：在分组内的排名，排名相等会在名次中不会留下空位
+- row\_number：从1开始，按照顺序生成分组内记录的排序
 
 ```
 SELECT 
@@ -377,18 +379,67 @@ cookie1 2015-04-14   2   6   5   6
 cookie1 2015-04-10   1   7   6   7
 ```
 
-# 4. 优化
+# 4. 高级应用
 
-## 4.1 使用分区剪裁、列剪裁
+**原始表（bdw.p_album）**
+
+albumid | albumname | tags（`Map<type, tags>`，tags逗号分隔）
+---- | ----- | ----
+474 | 谈恋爱遭“冷藏”雪莉消失三个月终回归 | `{"类型":["热点","八卦"],"地区":["日韩"],"是否付费":["免费"]}`
+
+## 4.1 复杂数据类型查询
+
+```
+select 
+  albumid,
+  tags['类型'] as typetagnames,
+  tags['地区'] as areatagnames
+from bdw.p_album
+limit 10;
+```
+
+## 4.2 行转列（lateral view explode）
+
+**转换**
+
+```
+select 
+  albumid,
+  albumname,
+  tagtype,
+  tagname
+from (
+  select
+    albumid,
+    albumname,
+    tagtype,
+    tagnames
+  from bdw.p_album lateral view explode(tags) tags as tagtype,tagnames
+) t lateral view explode(tagnames) tagnames as tagname
+limit 10;
+```
+
+**转换后**
+
+albumid | albumname | tagtype | tagname
+---- | ----- | ---- | -----
+474 | 谈恋爱遭“冷藏”雪莉消失三个月终回归 | 类型 | 热点
+474 | 谈恋爱遭“冷藏”雪莉消失三个月终回归 | 类型 | 八卦
+474 | 谈恋爱遭“冷藏”雪莉消失三个月终回归 | 地区 | 日韩
+474 | 谈恋爱遭“冷藏”雪莉消失三个月终回归 | 是否付费 | 免费
+
+# 5. 优化
+
+## 5.1 使用分区剪裁、列剪裁
 
 在SELECT中，只拿需要的列，如果有，尽量使用分区过滤，少用SELECT *。
 在分区剪裁中，当使用外关联时，如果将副表的过滤条件写在Where后面，那么就会先全表关联，之后再过滤。
 
-## 4.2 少用count distinct
+## 5.2 少用count distinct
 
 数据量小的时候无所谓，数据量大的情况下，由于COUNT DISTINCT操作需要用一个Reduce Task来完成，这一个Reduce需要处理的数据量太大，就会导致整个Job很难完成，一般COUNT DISTINCT使用先GROUP BY再COUNT的方式替换。
 
-## 4.3 减少map数（专家）
+## 5.3 减少map数（专家）
 
 ```
 set mapred.max.split.size=100000000;
@@ -397,14 +448,14 @@ set mapred.min.split.size.per.rack=100000000;
 set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat;
 ```
 
-## 4.4 调整reduce个数（专家）
+## 5.4 调整reduce个数（专家）
 
 ```
 set hive.exec.reducers.bytes.per.reducer=500000000; （500M）
 set mapred.reduce.tasks = 15;
 ```
 
-## 4.5 中间结果压缩（专家）
+## 5.5 中间结果压缩（专家）
 
 ```SQL
 -- 中间Lzo,最终Gzip
@@ -420,6 +471,6 @@ set hive.exec.compress.intermediate = true;
 set hive.intermediate.compression.codec = org.apache.hadoop.io.compress.LzoCodec;  
 ```
 
-# 5. 参考
+# 6. 参考
 
 [内置函数](https://blog.csdn.net/u013980127/article/details/52606024)
