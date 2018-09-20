@@ -7,10 +7,10 @@ import tools
 
 @tools.exectime
 def bubble_sort(array):
-    for i in range(len(array)):
-        for j in range(i, len(array)):
-            if array[i] > array[j]:
-                array[i], array[j] = array[j], array[i]
+    for i in range(len(array) - 1):  # 每次冒泡确定一个最大值，那么n个数比较，只需要进行n-1次冒泡就行了。
+        for j in range(len(array) - 1 - i):  # 比较的次数实际是在以递减的方式减少，每一轮循环就是将一个尚未排序的最大值进行了一次冒泡。
+            if array[j] > array[j + 1]:
+                array[j], array[j + 1] = array[j + 1], array[j]
     return array
 
 
