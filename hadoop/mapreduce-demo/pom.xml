@@ -15,10 +15,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
-            <version>${spark.version}</version>
-            <scope>${scope.value}</scope>
+            <groupId>com.zw</groupId>
+            <artifactId>hdfs-demo</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 

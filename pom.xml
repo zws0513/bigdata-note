@@ -12,10 +12,11 @@
     <modules>
         <module>hadoop/hive-demo</module>
         <module>hadoop/mapreduce-demo</module>
-        <module>spark/scala-demo</module>
+        <module>scala/scala-demo</module>
         <module>spark/spark-demo</module>
         <module>hadoop/hdfs-demo</module>
         <module>hadoop/hbase-demo</module>
+        <module>hadoop/storm-demo</module>
     </modules>
 
     <properties>

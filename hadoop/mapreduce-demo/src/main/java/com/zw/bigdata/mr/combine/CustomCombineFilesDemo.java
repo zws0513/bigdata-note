@@ -1,6 +1,6 @@
 package com.zw.bigdata.mr.combine;
 
-import com.zw.util.HdfsUtil;
+import com.zw.bigdata.hdfs.util.HdfsUtil;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
