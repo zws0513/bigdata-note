@@ -17,6 +17,7 @@
         <module>hadoop/hdfs-demo</module>
         <module>hadoop/hbase-demo</module>
         <module>hadoop/storm-demo</module>
+        <module>flink/flink-demo</module>
     </modules>
 
     <properties>
