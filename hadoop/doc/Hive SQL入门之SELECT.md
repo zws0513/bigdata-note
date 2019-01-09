@@ -22,8 +22,8 @@ SELECT [ALL | DISTINCT] select_expr, select_expr, ...
 
 ```SQL
 select channelId, count(mac) as click_num , count(distinct mac)  as click_pnum
-from detail.vodaction 
-where partner = 'AH_CMCC'
+from db.action 
+where partner = 'AH'
 and day between '2018-01-01' and '2018-01-31'
 group by channelId
 order by channelId
@@ -32,8 +32,8 @@ order by channelId
 **示例二**
 
 ```SQL
-with t1 as (select mac from bdw.p_prj_user where partner = 'AH_CMCC'),
-        t2 as (select dev_mac as mac from bdw.user_device where partner_code = 'AH_CMCC')
+with t1 as (select mac from bd.user where partner = 'AH'),
+        t2 as (select dev_mac as mac from db.user_device where partner_code = 'AH')
 select sum(case when t1.mac is not null then 1 else 0 end) as cnt 
 from t2 left join t1 
 on t2.mac = t1.mac;
@@ -54,9 +54,9 @@ on t2.mac = t1.mac;
 
 -- SQL1
 select partner, day, count(mac) as click_num, count(distinct mac)  as click_pnum
-from detail.vodaction 
+from db.action 
 where 
-partner in ('YNYDHW', 'YNYDZX')
+partner in ('HW', 'ZX')
 and day between '20180701' and '20180704'
 and action = 3
 group by partner, day
@@ -65,9 +65,9 @@ sort by partner, day asc
 
 -- SQL2
 select partner, day, count(mac) as click_num, count(distinct mac)  as click_pnum
-from detail.vodaction 
+from db.action 
 where 
-partner in ('YNYDHW', 'YNYDZX')
+partner in ('HW', 'ZX')
 and day between '20180701' and '20180704'
 and action = 3
 group by partner, day
@@ -77,9 +77,9 @@ cluster by partner, day
 
 -- SQL3
 select partner, day, count(mac) as click_num, count(distinct mac)  as click_pnum
-from detail.vodaction 
+from db.action 
 where 
-partner in ('YNYDHW', 'YNYDZX')
+partner in ('HW', 'ZX')
 and day between '20180701' and '20180704'
 and action = 3
 group by partner, day
@@ -414,7 +414,7 @@ from (
     albumname,
     tagtype,
     tagnames
-  from bdw.p_album lateral view explode(tags) tags as tagtype,tagnames
+  from db.album lateral view explode(tags) tags as tagtype,tagnames
 ) t lateral view explode(tagnames) tagnames as tagname
 limit 10;
 ```
