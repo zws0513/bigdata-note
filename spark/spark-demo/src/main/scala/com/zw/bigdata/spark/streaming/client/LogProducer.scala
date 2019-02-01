@@ -4,8 +4,6 @@ import java.util.Properties
 import java.util.concurrent.{Executors, ExecutorService}
 
 import com.alibaba.fastjson.JSONObject
-import kafka.javaapi.producer.Producer
-import kafka.producer.{KeyedMessage, ProducerConfig}
 
 import scala.util.Random
 
@@ -52,8 +50,8 @@ object LogProducer {
     props.put("metadata.broker.list", KAFKA_SERVER)
     props.put("serializer.class", "kafka.serializer.StringEncoder")
 
-    val config: ProducerConfig = new ProducerConfig(props)
-    val producer = new Producer[String, String](config)
+//    val config: ProducerConfig = new ProducerConfig(props)
+//    val producer = new Producer[String, String](config)
 
     //        while(true) {
     //            // prepare event data
@@ -72,7 +70,7 @@ object LogProducer {
 
     try {
       for (i <- 1 to 5) {
-        threadPools.execute(new LogProducer(i.toString, topic, producer))
+//        threadPools.execute(new LogProducer(i.toString, topic, producer))
       }
     } finally {
       threadPools.shutdown()
@@ -80,19 +78,19 @@ object LogProducer {
   }
 }
 
-class LogProducer(threadName: String, topic: String, producer: Producer[String, String]) extends Runnable {
-
-  override def run(): Unit = {
-    while (true) {
-      val event = new JSONObject()
-      event.put("uid", LogProducer.getUserID)
-      event.put("event_time", System.currentTimeMillis.toString)
-      event.put("os_type", LogProducer.getOSType)
-      event.put("click_count", LogProducer.click)
-      producer.send(new KeyedMessage[String, String](topic, event.toString))
-      println("Message sent: " + event)
-
-      Thread.sleep(1000)
-    }
-  }
-}
+//class LogProducer(threadName: String, topic: String, producer: Producer[String, String]) extends Runnable {
+//
+//  override def run(): Unit = {
+//    while (true) {
+//      val event = new JSONObject()
+//      event.put("uid", LogProducer.getUserID)
+//      event.put("event_time", System.currentTimeMillis.toString)
+//      event.put("os_type", LogProducer.getOSType)
+//      event.put("click_count", LogProducer.click)
+//      producer.send(new KeyedMessage[String, String](topic, event.toString))
+//      println("Message sent: " + event)
+//
+//      Thread.sleep(1000)
+//    }
+//  }
+//}
