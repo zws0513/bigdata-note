@@ -17,7 +17,7 @@ public class KafkaProducerEx  implements Serializable {
 
     private static final String VALUE_CLASS = "org.apache.kafka.common.serialization.ByteArraySerializer";
 
-    private static final String PARTITIONER_CLASS = "cn.gitv.lactea.etl.common.factory.SimplePartitioner";
+    private static final String PARTITIONER_CLASS = "com.zw.pool.SimplePartitioner";
 
     private static KafkaProducerEx instance = null;
 
